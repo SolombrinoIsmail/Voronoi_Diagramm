@@ -78,18 +78,17 @@ public class Controller implements Runnable {
         double xLine;
         double yLine;
         sortByXCoordinates();
-        System.out.println("Drawing Separation Lines based of distance of points");
+        //System.out.println("Drawing Separation Lines based of distance of points");
         for (int j = 1; j < 4; j++) {
             for (int i = 0; i < points.size(); i++) {
-                System.out.println("Location: X= " + points.get(i).getX() + " Y= " + points.get(i).getY());
+                //System.out.println("Location: X= " + points.get(i).getX() + " Y= " + points.get(i).getY());
                 if (i < points.size() - j) {
                     xLine = (points.get(i).getX() + points.get(i + j).getX()) / 2;
                     yLine = (points.get(i).getY() + points.get(i + j).getY()) / 2;
-                    System.out.println("X Line= " + xLine + " Y Line: " + yLine);
+                    //System.out.println("X Line= " + xLine + " Y Line: " + yLine);
                     Point mitte = new Point();
                     mitte.setLocation(xLine, yLine);
                     mittelSenkrechten.add(mitte);
-                    gc.setStroke(Color.RED);
                     gc.strokeLine(xLine, yLine, xLine + 2, yLine + 2);
                 }
             }
@@ -107,12 +106,14 @@ public class Controller implements Runnable {
 
     @Override
     public void run() {
-
+        sortByXCoordinates();
+        sortByYCoordinates();
         for (int h = 0; h < canvas.getWidth(); h++) {
             try {
-                for (Point p : points) {
-                    gc.strokeOval(p.getX() - (h / 2), p.getY() - (h / 2), h, h);
-                    System.out.println("Circle Durchmesser " + h);
+                for (int i = 0; i < points.size(); i++) {
+                    gc.strokeOval(points.get(i).getX() - (h / 2), points.get(i).getY() - (h / 2), h, h);
+                    //
+                    //System.out.println("Circle Durchmesser " + h);
                 }
                 Thread.sleep(30);
                 gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
