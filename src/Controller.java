@@ -1,6 +1,5 @@
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
@@ -8,13 +7,10 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 
 import java.awt.*;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Random;
-import java.util.ResourceBundle;
 
 public class Controller implements Runnable {
     @FXML
@@ -32,13 +28,14 @@ public class Controller implements Runnable {
     private double yMaxCanvas;
     private ArrayList<Point> points;
     private Thread test = new Thread(this);
+    private ArrayList<Point> mittelSenkrechten = new ArrayList<>();
 
     //FXML Handle Actions
-
     public void HandleDrawButton(ActionEvent event) {
         drawBorder();
         drawPoints();
-        setup();
+        mittelsenkrechte();
+        setup(); //starts animation
     }
 
     public void numberOnMouseReleased(MouseEvent event) { //Output Slidernumber on Label
@@ -47,7 +44,6 @@ public class Controller implements Runnable {
     }
 
     //Methods
-
     public void drawBorder() {
         System.out.println("Drawing Border");
         gc = canvas.getGraphicsContext2D();
@@ -78,20 +74,52 @@ public class Controller implements Runnable {
         }
     }
 
+    public void mittelsenkrechte() {
+        double xLine;
+        double yLine;
+        sortByXCoordinates();
+        System.out.println("Drawing Separation Lines based of distance of points");
+        for (int j = 1; j < 4; j++) {
+            for (int i = 0; i < points.size(); i++) {
+                System.out.println("Location: X= " + points.get(i).getX() + " Y= " + points.get(i).getY());
+                if (i < points.size() - j) {
+                    xLine = (points.get(i).getX() + points.get(i + j).getX()) / 2;
+                    yLine = (points.get(i).getY() + points.get(i + j).getY()) / 2;
+                    System.out.println("X Line= " + xLine + " Y Line: " + yLine);
+                    Point mitte = new Point();
+                    mitte.setLocation(xLine, yLine);
+                    mittelSenkrechten.add(mitte);
+                    gc.setStroke(Color.RED);
+                    gc.strokeLine(xLine, yLine, xLine + 2, yLine + 2);
+                }
+            }
+
+        }
+    }
+
+    public void sortByXCoordinates() {
+        this.points.sort(new XCoordinatesComparator());
+    }
+
+    public void sortByYCoordinates() {
+        this.points.sort(new YCoordinatesComparator());
+    }
 
     @Override
     public void run() {
+
         for (int h = 0; h < canvas.getWidth(); h++) {
             try {
                 for (Point p : points) {
                     gc.strokeOval(p.getX() - (h / 2), p.getY() - (h / 2), h, h);
+                    System.out.println("Circle Durchmesser " + h);
                 }
                 Thread.sleep(30);
                 gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-
+            mittelsenkrechte();
         }
     }
 
