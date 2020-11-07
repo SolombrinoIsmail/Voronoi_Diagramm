@@ -33,7 +33,8 @@ public class Controller implements Runnable {
     private ArrayList<Point> points;
     private Thread test = new Thread(this);
 
-    //FXML Handle Actions
+
+    //FXML Handle Button & Mouse Actions
 
     public void HandleDrawButton(ActionEvent event) {
         drawBorder();
@@ -78,7 +79,7 @@ public class Controller implements Runnable {
         }
     }
 
-
+    //Start a Thread that expands the Circles every 30ms
     @Override
     public void run() {
         for (int h = 0; h < canvas.getWidth(); h++) {
@@ -95,7 +96,7 @@ public class Controller implements Runnable {
         }
     }
 
-    public void setup() {
+    public void setup() { //sets up the Thread.
         test.stop();
         test = new Thread(this);
         test.start();

@@ -5,7 +5,7 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.stage.Stage;
 
-
+//This Class handles the Window that will be displayed as sonn as you lunch the main app.
 public class VornoiWindow extends Application {
 
     @Override
