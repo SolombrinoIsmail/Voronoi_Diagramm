@@ -68,28 +68,30 @@ public class Controller implements Runnable {
             int xPoint = ((int) (Math.random() * xMaxCanvas));
             int yPoint = ((int) (Math.random() * yMaxCanvas));
             Point point = new Point(xPoint, yPoint);
-            System.out.println(xPoint + " " + yPoint);
+            System.out.println("XPoint= "+xPoint + "  YPoint= " + yPoint);
             points.add(point);
             gc.fillOval(xPoint, yPoint, 5, 5);
         }
     }
 
     public void mittelsenkrechte() {
-        double xLine;
-        double yLine;
+        double xBisector;
+        double yBisector;
         sortByXCoordinates();
         //System.out.println("Drawing Separation Lines based of distance of points");
         for (int j = 1; j < 4; j++) {
             for (int i = 0; i < points.size(); i++) {
                 //System.out.println("Location: X= " + points.get(i).getX() + " Y= " + points.get(i).getY());
                 if (i < points.size() - j) {
-                    xLine = (points.get(i).getX() + points.get(i + j).getX()) / 2;
-                    yLine = (points.get(i).getY() + points.get(i + j).getY()) / 2;
-                    //System.out.println("X Line= " + xLine + " Y Line: " + yLine);
+                    xBisector = (points.get(i).getX() + points.get(i + j).getX()) / 2;
+                    yBisector = (points.get(i).getY() + points.get(i + j).getY()) / 2;
+                    System.out.println("X Line= " + xBisector + " Y Line: " + yBisector);
                     Point mitte = new Point();
-                    mitte.setLocation(xLine, yLine);
+                    mitte.setLocation(xBisector, yBisector);
                     mittelSenkrechten.add(mitte);
-                    gc.strokeLine(xLine, yLine, xLine + 2, yLine + 2);
+                    double gradient = 1 / ((points.get(i).getY() - points.get(i + j).getY()) / ((points.get(i).getX() - points.get(i + j).getX()))); //Steigung
+                    System.out.println("Steigung= " + gradient);
+                    gc.strokeLine(xBisector, yBisector, xBisector, yBisector);
                 }
             }
 
@@ -104,24 +106,45 @@ public class Controller implements Runnable {
         this.points.sort(new YCoordinatesComparator());
     }
 
-    @Override
-    public void run() {
-        sortByXCoordinates();
-        sortByYCoordinates();
+    public void outterCircle() {
         for (int h = 0; h < canvas.getWidth(); h++) {
             try {
                 for (int i = 0; i < points.size(); i++) {
-                    gc.strokeOval(points.get(i).getX() - (h / 2), points.get(i).getY() - (h / 2), h, h);
-                    //
-                    //System.out.println("Circle Durchmesser " + h);
+                    gc.fillOval(points.get(i).getX() - (h / 2), points.get(i).getY() - (h / 2), h, h);
+                    Point temp = points.get(i).getLocation();
+                    //This loop Searching for every point that matches the circle coordinate in its 360 Degree Angles
+                    for (Point x : mittelSenkrechten) {
+                        for (double angle = 0; angle < 360; angle++) {
+                            double radians = Math.toRadians(angle);
+                            double tempx = (h / 2) * Math.cos(radians);
+                            double tempy = (h / 2) * Math.sin(radians);
+                            Point test = new Point((int) (points.get(i).getX() + tempx), (int) (points.get(i).getY() + tempy));
+                            if (test.equals(x)) {     //If a point is matched the circle will be colored Red
+                                gc.setFill(Color.RED);
+                                gc.fillOval(points.get(i).getX() - (h / 2), points.get(i).getY() - (h / 2), h, h);
+                                gc.setStroke(Color.RED);
+                                gc.strokeLine(x.getX(), x.getY(), x.getX() + 2, x.getY() + 2);
+
+                            }
+                            gc.setFill(Color.BLACK);
+                            gc.setStroke(Color.BLACK);
+                        }
+                    }
                 }
-                Thread.sleep(30);
+                Thread.sleep(1);
                 gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
             mittelsenkrechte();
         }
+    }
+
+    @Override
+    public void run() {
+        sortByXCoordinates();
+        sortByYCoordinates();
+        outterCircle();
     }
 
     public void setup() {
