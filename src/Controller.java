@@ -68,7 +68,7 @@ public class Controller implements Runnable {
             int xPoint = ((int) (Math.random() * xMaxCanvas));
             int yPoint = ((int) (Math.random() * yMaxCanvas));
             Point point = new Point(xPoint, yPoint);
-            System.out.println("XPoint= "+xPoint + "  YPoint= " + yPoint);
+            System.out.println("XPoint= " + xPoint + "  YPoint= " + yPoint);
             points.add(point);
             gc.fillOval(xPoint, yPoint, 5, 5);
         }
@@ -79,7 +79,7 @@ public class Controller implements Runnable {
         double yBisector;
         sortByXCoordinates();
         //System.out.println("Drawing Separation Lines based of distance of points");
-        for (int j = 1; j < 4; j++) {
+        for (int j = 1; j < 2; j++) {
             for (int i = 0; i < points.size(); i++) {
                 //System.out.println("Location: X= " + points.get(i).getX() + " Y= " + points.get(i).getY());
                 if (i < points.size() - j) {
@@ -89,9 +89,12 @@ public class Controller implements Runnable {
                     Point mitte = new Point();
                     mitte.setLocation(xBisector, yBisector);
                     mittelSenkrechten.add(mitte);
-                    double gradient = 1 / ((points.get(i).getY() - points.get(i + j).getY()) / ((points.get(i).getX() - points.get(i + j).getX()))); //Steigung
+                    double gradient = -1 / ((points.get(i + j).getY() - points.get(i).getY()) / ((points.get(i + j).getX() - points.get(i).getX()))); //Steigung
                     System.out.println("Steigung= " + gradient);
-                    gc.strokeLine(xBisector, yBisector, xBisector, yBisector);
+                    double yBisectorEndingOfLine = yBisector - gradient * xBisector;
+                    double xBisectorEndingOfLine = yBisector - yBisectorEndingOfLine / gradient;
+                    gc.strokeLine(xBisectorEndingOfLine, 0, 0, yBisectorEndingOfLine);
+
                 }
             }
 
