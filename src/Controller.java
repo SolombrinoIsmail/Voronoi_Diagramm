@@ -111,6 +111,7 @@ public class Controller implements Runnable {
                     //gc.strokeLine(prependicularBisectorx.get(i).getX(), 900, xBisector, yBisector);
                     System.out.println("positive");
                 } else {
+
                     gc.strokeLine(SchnittpunktZwischen, 0, 0, yAchsenAbschnitt);
                    // gc.strokeLine(S 0, xBisector, yBisector);
                     System.out.println("Negative");
