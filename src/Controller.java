@@ -8,6 +8,7 @@ import javafx.scene.control.Slider;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 
+import javax.sound.sampled.Line;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Random;
@@ -32,9 +33,6 @@ public class Controller implements Runnable {
 
     //FXML Handle Actions
     public void HandleDrawButton(ActionEvent event) {
-        drawBorder();
-        drawPoints();
-        mittelsenkrechte();
         setup(); //starts animation
     }
 
@@ -61,7 +59,6 @@ public class Controller implements Runnable {
 
     public void drawPoints() {
         System.out.println("Drawing Points");
-        gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
         points = new ArrayList<>();
         Random random = new Random();
         for (int x = 0; x < slider.getValue(); x++) {
@@ -71,34 +68,52 @@ public class Controller implements Runnable {
             System.out.println("XPoint= " + xPoint + "  YPoint= " + yPoint);
             points.add(point);
             gc.fillOval(xPoint, yPoint, 5, 5);
+            sortByXCoordinates();
+        }
+    }
+
+    public void drawDistance() {
+        for (int i = 0; i < 1; i++) {
+            for (int j = 1; j < points.size(); j++) {
+                if (i < points.size() - 1) {
+                    gc.strokeLine(points.get(i).getX(), points.get(i).getY(), points.get(j).getX(), points.get(j).getY());
+                    System.out.println("x: " + points.get(i).getX() + " y: " + points.get(i).getY() + " x2: " + points.get(i + 1).getX() + " y2: " + points.get(i + 1).getY());
+                }
+            }
         }
     }
 
     public void mittelsenkrechte() {
         double xBisector;
         double yBisector;
-        sortByXCoordinates();
-        //System.out.println("Drawing Separation Lines based of distance of points");
-        for (int j = 1; j < 2; j++) {
-            for (int i = 0; i < points.size(); i++) {
-                //System.out.println("Location: X= " + points.get(i).getX() + " Y= " + points.get(i).getY());
-                if (i < points.size() - j) {
-                    xBisector = (points.get(i).getX() + points.get(i + j).getX()) / 2;
-                    yBisector = (points.get(i).getY() + points.get(i + j).getY()) / 2;
-                    System.out.println("X Line= " + xBisector + " Y Line: " + yBisector);
-                    Point mitte = new Point();
-                    mitte.setLocation(xBisector, yBisector);
-                    mittelSenkrechten.add(mitte);
-                    double gradient = -1 / ((points.get(i + j).getY() - points.get(i).getY()) / ((points.get(i + j).getX() - points.get(i).getX()))); //Steigung
-                    System.out.println("Steigung= " + gradient);
-                    double yBisectorEndingOfLine = yBisector - gradient * xBisector;
-                    double xBisectorEndingOfLine = yBisector - yBisectorEndingOfLine / gradient;
-                    gc.strokeLine(xBisectorEndingOfLine, 0, 0, yBisectorEndingOfLine);
-
+        double gradient;
+        double reversedGradient;
+        double yAchsenAbschnitt;
+        ArrayList<Point> prependicularBisectorx = new ArrayList<>();
+        for (int i = 0; i < 1; i++) {
+            for (int j = 1; j < points.size(); j++) {
+                xBisector = (points.get(i).getX() + points.get(j).getX()) / 2;
+                yBisector = (points.get(i).getY() + points.get(j).getY()) / 2;
+                gradient = (points.get(j).getY() - points.get(i).getY()) / (points.get(j).getX() - points.get(i).getX());
+                reversedGradient = -1 / gradient;
+                Point middlePoint = new Point();
+                middlePoint.setLocation(xBisector, yBisector);
+                mittelSenkrechten.add(middlePoint);
+                System.out.println("middlepoint:" + mittelSenkrechten.get(i).getLocation());
+                yAchsenAbschnitt = yBisector - (reversedGradient * xBisector);
+                gc.strokeLine(xBisector, yBisector, 0, yAchsenAbschnitt);
+                double xOfOpposite = (yBisector - yAchsenAbschnitt) / reversedGradient;
+                Point oppositeOfYAchsenAbschnitt = new Point();
+                oppositeOfYAchsenAbschnitt.setLocation(xOfOpposite, yBisector);
+                prependicularBisectorx.add(oppositeOfYAchsenAbschnitt);
+                if(reversedGradient>0){
+                    gc.strokeLine(xBisector, yBisector, prependicularBisectorx.get(i).getX(), 900);
+                }else{
+                    gc.strokeLine(xBisector, yBisector, prependicularBisectorx.get(i).getX(), 0);
                 }
             }
-
         }
+
     }
 
     public void sortByXCoordinates() {
@@ -110,6 +125,7 @@ public class Controller implements Runnable {
     }
 
     public void outterCircle() {
+
         for (int h = 0; h < canvas.getWidth(); h++) {
             try {
                 for (int i = 0; i < points.size(); i++) {
@@ -134,7 +150,7 @@ public class Controller implements Runnable {
                         }
                     }
                 }
-                Thread.sleep(1);
+                Thread.sleep(100);
                 gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -145,16 +161,19 @@ public class Controller implements Runnable {
 
     @Override
     public void run() {
-        sortByXCoordinates();
-        sortByYCoordinates();
-        outterCircle();
+        drawBorder();
+        drawPoints();
+        drawDistance();
+        mittelsenkrechte();
+
+
     }
 
     public void setup() {
         test.stop();
         test = new Thread(this);
         test.start();
-        gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+
     }
 }
 
