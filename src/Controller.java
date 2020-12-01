@@ -61,7 +61,7 @@ public class Controller implements Runnable {
         System.out.println("Drawing Points");
         points = new ArrayList<>();
         Random random = new Random();
-        for (int x = 0; x < slider.getValue(); x++) {
+        for (int x = 0; x < 4; x++) {
             int xPoint = ((int) (Math.random() * xMaxCanvas));
             int yPoint = ((int) (Math.random() * yMaxCanvas));
             Point point = new Point(xPoint, yPoint);
@@ -73,7 +73,7 @@ public class Controller implements Runnable {
     }
 
     public void drawDistance() {
-        for (int i = 0; i < 1; i++) {
+        for (int i = 0; i < points.size(); i++) {
             for (int j = 1; j < points.size(); j++) {
                 if (i < points.size() - 1) {
                     gc.strokeLine(points.get(i).getX(), points.get(i).getY(), points.get(j).getX(), points.get(j).getY());
@@ -90,8 +90,8 @@ public class Controller implements Runnable {
         double reversedGradient;
         double yAchsenAbschnitt;
         ArrayList<Point> prependicularBisectorx = new ArrayList<>();
-        for (int i = 0; i < 1; i++) {
-            for (int j = 1; j < points.size(); j++) {
+        for (int i = 0; i < points.size(); i++) {
+            for (int j = i; j < points.size(); j++) {
                 xBisector = (points.get(i).getX() + points.get(j).getX()) / 2;
                 yBisector = (points.get(i).getY() + points.get(j).getY()) / 2;
                 gradient = (points.get(j).getY() - points.get(i).getY()) / (points.get(j).getX() - points.get(i).getX());
@@ -101,15 +101,20 @@ public class Controller implements Runnable {
                 mittelSenkrechten.add(middlePoint);
                 System.out.println("middlepoint:" + mittelSenkrechten.get(i).getLocation());
                 yAchsenAbschnitt = yBisector - (reversedGradient * xBisector);
-                gc.strokeLine(xBisector, yBisector, 0, yAchsenAbschnitt);
-                double xOfOpposite = (yBisector - yAchsenAbschnitt) / reversedGradient;
+                double xOfOpposite = (900 - yAchsenAbschnitt) / reversedGradient;
                 Point oppositeOfYAchsenAbschnitt = new Point();
                 oppositeOfYAchsenAbschnitt.setLocation(xOfOpposite, yBisector);
                 prependicularBisectorx.add(oppositeOfYAchsenAbschnitt);
-                if(reversedGradient>0){
-                    gc.strokeLine(xBisector, yBisector, prependicularBisectorx.get(i).getX(), 900);
-                }else{
-                    gc.strokeLine(xBisector, yBisector, prependicularBisectorx.get(i).getX(), 0);
+                double SchnittpunktZwischen = -yAchsenAbschnitt / reversedGradient;
+                if (reversedGradient > 0) {
+                    //gc.strokeLine(xBisector, yBisector, 0, yAchsenAbschnitt);
+                    //gc.strokeLine(prependicularBisectorx.get(i).getX(), 900, xBisector, yBisector);
+                    System.out.println("positive");
+                } else {
+                    gc.strokeLine(SchnittpunktZwischen, 0, 0, yAchsenAbschnitt);
+                   // gc.strokeLine(S 0, xBisector, yBisector);
+                    System.out.println("Negative");
+                    // gc.strokeLine(prependicularBisectorx.get(i).getX(), 0, (-yAchsenAbschnitt + yBisector) / reversedGradient, 0);
                 }
             }
         }
