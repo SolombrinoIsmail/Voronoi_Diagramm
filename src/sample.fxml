@@ -21,12 +21,12 @@
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </padding>
                   </Label>
-                  <Slider fx:id="slider" max="30.0" min="10.0" onMouseReleased="#numberOnMouseReleased">
+                  <Slider fx:id="slider" max="30.0" min="2.0" onMouseReleased="#numberOnMouseReleased">
                      <padding>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </padding>
                   </Slider>
-                  <Label fx:id="number" text="10">
+                  <Label fx:id="number" text="2">
                      <padding>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </padding>

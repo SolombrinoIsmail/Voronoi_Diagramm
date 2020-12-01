@@ -37,7 +37,7 @@ public class Controller implements Runnable {
     }
 
     public void numberOnMouseReleased(MouseEvent event) { //Output Slidernumber on Label
-        String numberOfSlider = String.valueOf(Math.round(slider.getValue()));
+        String numberOfSlider = String.valueOf((int)slider.getValue());
         number.setText(numberOfSlider);
     }
 
@@ -61,29 +61,29 @@ public class Controller implements Runnable {
         System.out.println("Drawing Points");
         points = new ArrayList<>();
         Random random = new Random();
-        for (int x = 0; x < 4; x++) {
+        for (int x = 0; x < (int)slider.getValue(); x++) {
             int xPoint = ((int) (Math.random() * xMaxCanvas));
             int yPoint = ((int) (Math.random() * yMaxCanvas));
             Point point = new Point(xPoint, yPoint);
             System.out.println("XPoint= " + xPoint + "  YPoint= " + yPoint);
             points.add(point);
-            gc.fillOval(xPoint, yPoint, 5, 5);
+            gc.fillOval(xPoint, yPoint, 2, 2);
             sortByXCoordinates();
         }
     }
 
     public void drawDistance() {
         for (int i = 0; i < points.size(); i++) {
-            for (int j = 1; j < points.size(); j++) {
-                if (i < points.size() - 1) {
+            for (int j = 0; j < points.size(); j++) {
+                if (i < points.size() ) {
                     gc.strokeLine(points.get(i).getX(), points.get(i).getY(), points.get(j).getX(), points.get(j).getY());
-                    System.out.println("x: " + points.get(i).getX() + " y: " + points.get(i).getY() + " x2: " + points.get(i + 1).getX() + " y2: " + points.get(i + 1).getY());
                 }
             }
         }
     }
 
     public void mittelsenkrechte() {
+        gc.setStroke(Color.RED);
         double xBisector;
         double yBisector;
         double gradient;
@@ -103,23 +103,19 @@ public class Controller implements Runnable {
                 yAchsenAbschnitt = yBisector - (reversedGradient * xBisector);
                 double xOfOpposite = (900 - yAchsenAbschnitt) / reversedGradient;
                 Point oppositeOfYAchsenAbschnitt = new Point();
-                oppositeOfYAchsenAbschnitt.setLocation(xOfOpposite, yBisector);
+                oppositeOfYAchsenAbschnitt.setLocation(xOfOpposite, 900);
                 prependicularBisectorx.add(oppositeOfYAchsenAbschnitt);
                 double SchnittpunktZwischen = -yAchsenAbschnitt / reversedGradient;
                 if (reversedGradient > 0) {
-                    //gc.strokeLine(xBisector, yBisector, 0, yAchsenAbschnitt);
-                    //gc.strokeLine(prependicularBisectorx.get(i).getX(), 900, xBisector, yBisector);
-                    System.out.println("positive");
+                    gc.strokeLine(prependicularBisectorx.get(j).getX(), 900, 0, yAchsenAbschnitt);
+                    System.out.println("Positive");
                 } else {
-
                     gc.strokeLine(SchnittpunktZwischen, 0, 0, yAchsenAbschnitt);
-                   // gc.strokeLine(S 0, xBisector, yBisector);
                     System.out.println("Negative");
-                    // gc.strokeLine(prependicularBisectorx.get(i).getX(), 0, (-yAchsenAbschnitt + yBisector) / reversedGradient, 0);
                 }
             }
         }
-
+        gc.setStroke(Color.BLACK);
     }
 
     public void sortByXCoordinates() {
@@ -169,7 +165,7 @@ public class Controller implements Runnable {
     public void run() {
         drawBorder();
         drawPoints();
-        drawDistance();
+      drawDistance();
         mittelsenkrechte();
 
 
