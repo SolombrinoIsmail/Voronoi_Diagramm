@@ -37,13 +37,12 @@ public class Controller implements Runnable {
     }
 
     public void numberOnMouseReleased(MouseEvent event) { //Output Slidernumber on Label
-        String numberOfSlider = String.valueOf((int)slider.getValue());
+        String numberOfSlider = String.valueOf((int) slider.getValue());
         number.setText(numberOfSlider);
     }
 
     //Methods
     public void drawBorder() {
-        System.out.println("Drawing Border");
         gc = canvas.getGraphicsContext2D();
         // draws Border for the Pane
         gc.setStroke(Color.BLACK);
@@ -58,14 +57,12 @@ public class Controller implements Runnable {
     }
 
     public void drawPoints() {
-        System.out.println("Drawing Points");
         points = new ArrayList<>();
         Random random = new Random();
-        for (int x = 0; x < (int)slider.getValue(); x++) {
+        for (int x = 0; x < (int) slider.getValue(); x++) {
             int xPoint = ((int) (Math.random() * xMaxCanvas));
             int yPoint = ((int) (Math.random() * yMaxCanvas));
             Point point = new Point(xPoint, yPoint);
-            System.out.println("XPoint= " + xPoint + "  YPoint= " + yPoint);
             points.add(point);
             gc.fillOval(xPoint, yPoint, 2, 2);
             sortByXCoordinates();
@@ -75,7 +72,7 @@ public class Controller implements Runnable {
     public void drawDistance() {
         for (int i = 0; i < points.size(); i++) {
             for (int j = 0; j < points.size(); j++) {
-                if (i < points.size() ) {
+                if (i < points.size()) {
                     gc.strokeLine(points.get(i).getX(), points.get(i).getY(), points.get(j).getX(), points.get(j).getY());
                 }
             }
@@ -88,7 +85,6 @@ public class Controller implements Runnable {
         double yBisector;
         double gradient;
         double reversedGradient;
-        double yAchsenAbschnitt;
         ArrayList<Point> prependicularBisectorx = new ArrayList<>();
         for (int i = 0; i < points.size(); i++) {
             for (int j = i; j < points.size(); j++) {
@@ -96,22 +92,20 @@ public class Controller implements Runnable {
                 yBisector = (points.get(i).getY() + points.get(j).getY()) / 2;
                 gradient = (points.get(j).getY() - points.get(i).getY()) / (points.get(j).getX() - points.get(i).getX());
                 reversedGradient = -1 / gradient;
-                Point middlePoint = new Point();
-                middlePoint.setLocation(xBisector, yBisector);
-                mittelSenkrechten.add(middlePoint);
-                System.out.println("middlepoint:" + mittelSenkrechten.get(i).getLocation());
-                yAchsenAbschnitt = yBisector - (reversedGradient * xBisector);
-                double xOfOpposite = (900 - yAchsenAbschnitt) / reversedGradient;
+                double yAchsenAbschnitt = yBisector - (reversedGradient * xBisector);
+                double xOppositeYAchsenabschnitt = (-yAchsenAbschnitt + 900) / reversedGradient;
                 Point oppositeOfYAchsenAbschnitt = new Point();
-                oppositeOfYAchsenAbschnitt.setLocation(xOfOpposite, 900);
+                oppositeOfYAchsenAbschnitt.setLocation(xOppositeYAchsenabschnitt, 900);
                 prependicularBisectorx.add(oppositeOfYAchsenAbschnitt);
                 double SchnittpunktZwischen = -yAchsenAbschnitt / reversedGradient;
                 if (reversedGradient > 0) {
-                    gc.strokeLine(prependicularBisectorx.get(j).getX(), 900, 0, yAchsenAbschnitt);
-                    System.out.println("Positive");
-                } else {
+                    gc.strokeLine(prependicularBisectorx.get(prependicularBisectorx.size() - 1).getX(), 900, 0, yAchsenAbschnitt);
+                    System.out.println("positive i= " + i + " j= " + j);
+                } else if (reversedGradient < 0) {
                     gc.strokeLine(SchnittpunktZwischen, 0, 0, yAchsenAbschnitt);
-                    System.out.println("Negative");
+                    System.out.println("negative i= " + i + " j= " + j);
+                } else if (gradient == 0) {
+                    System.out.println("Division b y0 i=" + i + " j= " + j);
                 }
             }
         }
@@ -165,8 +159,9 @@ public class Controller implements Runnable {
     public void run() {
         drawBorder();
         drawPoints();
-      drawDistance();
+        //drawDistance();
         mittelsenkrechte();
+        outterCircle();
 
 
     }
