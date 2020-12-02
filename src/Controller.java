@@ -99,12 +99,18 @@ public class Controller implements Runnable {
                 prependicularBisectorx.add(oppositeOfYAchsenAbschnitt);
                 double SchnittpunktZwischen = -yAchsenAbschnitt / reversedGradient;
                 if (reversedGradient > 0) {
+                    Point bisecotr = new Point((int) xBisector, (int) yBisector);
+                    mittelSenkrechten.add(bisecotr);
                     gc.strokeLine(prependicularBisectorx.get(prependicularBisectorx.size() - 1).getX(), 900, 0, yAchsenAbschnitt);
                     System.out.println("positive i= " + i + " j= " + j);
                 } else if (reversedGradient < 0) {
+                    Point bisecotr = new Point((int) xBisector, (int) yBisector);
+                    mittelSenkrechten.add(bisecotr);
                     gc.strokeLine(SchnittpunktZwischen, 0, 0, yAchsenAbschnitt);
                     System.out.println("negative i= " + i + " j= " + j);
                 } else if (gradient == 0) {
+                    Point bisecotr = new Point((int) xBisector, (int) yBisector);
+                    mittelSenkrechten.add(bisecotr);
                     System.out.println("Division b y0 i=" + i + " j= " + j);
                 }
             }
@@ -139,14 +145,13 @@ public class Controller implements Runnable {
                                 gc.fillOval(points.get(i).getX() - (h / 2), points.get(i).getY() - (h / 2), h, h);
                                 gc.setStroke(Color.RED);
                                 gc.strokeLine(x.getX(), x.getY(), x.getX() + 2, x.getY() + 2);
-
                             }
                             gc.setFill(Color.BLACK);
                             gc.setStroke(Color.BLACK);
                         }
                     }
                 }
-                Thread.sleep(100);
+                Thread.sleep(1);
                 gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
             } catch (InterruptedException e) {
                 e.printStackTrace();
